@@ -12,8 +12,10 @@ export default class LiveInstrumentManager {
         let developer = "system";
         // TODO: this.sourceMarker.config.serviceToken
 
-        this.sourceMarker.eventBusRegisterHandler(`spp.service.live-instrument.subscriber:${developer}`, message => {
-            let liveEvent: LiveInstrumentEvent = message.body;
+        this.sourceMarker.eventBusRegisterHandler(`spp.service.live-instrument.subscriber:${developer}`, (err, message) => {
+            let body = message.body;
+            body.eventType = LiveInstrumentEventType[body.eventType];
+            let liveEvent: LiveInstrumentEvent = body;
             this.sourceMarker.log(`Received instrument event. Type: ${LiveInstrumentEventType[liveEvent.eventType]}`);
 
             switch (liveEvent.eventType) {
@@ -39,8 +41,6 @@ export default class LiveInstrumentManager {
                     this.sourceMarker.log(`Un-implemented event type: ${LiveInstrumentEventType[liveEvent.eventType]}`);
             }
         });
-
-
     }
 
     handleLogHitEvent(liveEvent: LiveInstrumentEvent) {

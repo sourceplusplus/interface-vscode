@@ -74,8 +74,6 @@ export class SourceMarker {
         let getRecordsResponse = await this.eventBusSend("get-records", null, {});
         this.records = getRecordsResponse.body;
 
-        console.log(this.records);
-
         this.log(`Discovered ${this.records!.length} services`);
 
         if (this.records!.some(r => r.name === "spp.service.live-service")) {
@@ -90,6 +88,7 @@ export class SourceMarker {
             this.log("Live instruments available");
 
             this.liveInstrumentManager = new LiveInstrumentManager(this);
+            await this.liveInstrumentManager.start();
             // TODO: Live instruments
         } else {
             this.log("Live instruments unavailable");
@@ -117,7 +116,7 @@ export class SourceMarker {
         });
     }
 
-    eventBusRegisterHandler(address: string, handler: (message: any) => void) {
+    eventBusRegisterHandler(address: string, handler: (err: any, message: any) => void) {
         this.eventBus!.registerHandler(address, {
             "auth-token": this.token
         }, handler);
