@@ -74,9 +74,11 @@ export class SourceMarker {
         let getRecordsResponse = await this.eventBusSend("get-records", null, {});
         this.records = getRecordsResponse.body;
 
+        console.log(this.records);
+
         this.log(`Discovered ${this.records!.length} services`);
 
-        if (this.records!.some(r => r.type === "spp.service.live-service")) {
+        if (this.records!.some(r => r.name === "spp.service.live-service")) {
             this.log("Live service available");
 
             // TODO: Live service
@@ -84,7 +86,7 @@ export class SourceMarker {
             this.log("Live service unavailable");
         }
 
-        if (this.records!.some(r => r.type === "spp.service.live-instrument")) {
+        if (this.records!.some(r => r.name === "spp.service.live-instrument")) {
             this.log("Live instruments available");
 
             this.liveInstrumentManager = new LiveInstrumentManager(this);
@@ -93,7 +95,7 @@ export class SourceMarker {
             this.log("Live instruments unavailable");
         }
 
-        if (this.records!.some(r => r.type === "spp.service.live-view")) {
+        if (this.records!.some(r => r.name === "spp.service.live-view")) {
             this.log("Live views available");
 
             // TODO: Live views
