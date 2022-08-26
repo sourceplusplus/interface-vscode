@@ -16,7 +16,10 @@ export default async function addBreakpointCommand() {
     await new Promise<void>(resolve => {
         input.onDidAccept(() => {
             let value = parseInt(input.value);
-            if (isNaN(value) || value < 1) return; // TODO: Display error
+            if (isNaN(value) || value < 1) {
+                vscode.window.showErrorMessage("Hit Limit must be a positive integer");
+                return;
+            }
             resolve();
         });
         input.show();
