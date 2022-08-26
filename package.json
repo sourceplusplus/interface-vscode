@@ -20,6 +20,14 @@
         "title": "Source++: Add Breakpoint"
       }
     ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "sourceplusplus.addBreakpoint",
+          "when": "activeEditor"
+        }
+      ]
+    },
     "configuration": {
       "title": "Source++",
       "properties": {

@@ -17,6 +17,11 @@ interface RecordLocation {
     endpoint: string
 }
 
+export interface LiveLocation {
+    source: string
+    line: number
+}
+
 export class SourceMarker {
     config?: SourceMarkerConfig
 
@@ -120,6 +125,29 @@ export class SourceMarker {
         this.eventBus!.registerHandler(address, {
             "auth-token": this.token
         }, handler);
+    }
+
+    async addLiveBreakpoint(location: LiveLocation, condition: string, hitLimit: number) {
+        const options = {
+            method: 'POST',
+            url: `${this.config!.host}/graphql/spp`,
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + this.token!
+            },
+            data: {
+                "query": "mutation ($input: LiveBreakpointInput!) { addLiveBreakpoint(input: $input) { id location { source line } condition expiresAt hitLimit applyImmediately applied pending throttle { limit step } } }",
+                "variables": {
+                    "input": {
+                        "location": location,
+                        "condition": condition,
+                        "hitLimit": hitLimit,
+                        "applyImmediately": true
+                    }
+                }
+            }
+        };
+        return axios.request(options);
     }
 
     log(message: string) {

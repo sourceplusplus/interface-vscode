@@ -1,14 +1,24 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import EventBus = require("@vertx/eventbus-bridge-client.js");
+import {Uri} from 'vscode';
 import {SourceMarker} from "./sourcemarker";
-import {Uri} from "vscode";
 import addBreakpointCommand from "./commands/addBreakpointCommand";
-import BreakpointTreeProvider from "./instruments/breakpoint/breakpointTreeProvider";
-import breakpointTreeProvider from "./instruments/breakpoint/breakpointTreeProvider";
 
 const workspaces = new Map<Uri, SourceMarker>();
+
+export function getSourceMarker(): SourceMarker | undefined {
+    let workspaceUri = vscode.workspace.workspaceFile;
+    if (!workspaceUri)
+        return undefined;
+
+    let sourceMarker = workspaces.get(workspaceUri);
+    if (!sourceMarker) {
+        sourceMarker = new SourceMarker();
+        workspaces.set(workspaceUri, sourceMarker);
+    }
+    return sourceMarker;
+}
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -18,32 +28,10 @@ export function activate(context: vscode.ExtensionContext) {
         if (!e.affectsConfiguration("sourceplusplus"))
             return;
 
-        let workspaceUri = vscode.workspace.workspaceFile!;
-        let config = vscode.workspace.getConfiguration("sourceplusplus");
-
-        if (workspaces.has(workspaceUri)) {
-            workspaces.get(workspaceUri)!.init(config);
-        } else {
-            let sourceMarker = new SourceMarker();
-            sourceMarker.init(config);
-            workspaces.set(workspaceUri, sourceMarker);
-        }
+        getSourceMarker()?.init(vscode.workspace.getConfiguration("sourceplusplus"));
     });
 
-    console.log(vscode.workspace.workspaceFile)
-
-    if (vscode.workspace.workspaceFile) {
-        let workspaceUri = vscode.workspace.workspaceFile!;
-        let config = vscode.workspace.getConfiguration("sourceplusplus");
-
-        if (workspaces.has(workspaceUri)) {
-            workspaces.get(workspaceUri)!.init(config);
-        } else {
-            let sourceMarker = new SourceMarker();
-            sourceMarker.init(config);
-            workspaces.set(workspaceUri, sourceMarker);
-        }
-    }
+    getSourceMarker()?.init(vscode.workspace.getConfiguration("sourceplusplus"));
 
     const testCommandId = "sourceplusplus.statusClick";
 
