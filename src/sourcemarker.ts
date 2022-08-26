@@ -1,6 +1,8 @@
 import EventBus = require("@vertx/eventbus-bridge-client.js");
 import * as vscode from "vscode";
 import axios from "axios";
+import {readConfig, SourceMarkerConfig} from "./sourceMarkerConfig";
+import LiveInstrumentManager from "./instruments/liveInstrumentManager";
 
 interface Record {
     location: RecordLocation
@@ -16,18 +18,24 @@ interface RecordLocation {
 }
 
 export class SourceMarker {
+    config?: SourceMarkerConfig
+
     token?: string;
     eventBus?: EventBus;
 
-    records?: Record[]
+    records?: Record[];
+
+    liveInstrumentManager?: LiveInstrumentManager;
 
     constructor() {
 
     }
 
     async init(config: vscode.WorkspaceConfiguration) {
-        let host = config.get("host");
-        let accessToken = config.get("accessToken");
+        this.config = readConfig(config);
+
+        let host = this.config.host;
+        let accessToken = this.config.accessToken;
 
         console.log(`Host: ${host}, accessToken: ${accessToken}`);
 
@@ -76,6 +84,15 @@ export class SourceMarker {
             this.log("Live service unavailable");
         }
 
+        if (this.records!.some(r => r.type === "spp.service.live-instrument")) {
+            this.log("Live instruments available");
+
+            this.liveInstrumentManager = new LiveInstrumentManager(this);
+            // TODO: Live instruments
+        } else {
+            this.log("Live instruments unavailable");
+        }
+
         if (this.records!.some(r => r.type === "spp.service.live-view")) {
             this.log("Live views available");
 
@@ -96,6 +113,12 @@ export class SourceMarker {
                 resolve(message);
             });
         });
+    }
+
+    eventBusRegisterHandler(address: string, handler: (message: any) => void) {
+        this.eventBus!.registerHandler(address, {
+            "auth-token": this.token
+        }, handler);
     }
 
     log(message: string) {
