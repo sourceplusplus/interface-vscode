@@ -5,6 +5,8 @@ import EventBus = require("@vertx/eventbus-bridge-client.js");
 import {SourceMarker} from "./sourcemarker";
 import {Uri} from "vscode";
 import addBreakpointCommand from "./commands/addBreakpointCommand";
+import BreakpointTreeProvider from "./instruments/breakpoint/breakpointTreeProvider";
+import breakpointTreeProvider from "./instruments/breakpoint/breakpointTreeProvider";
 
 const workspaces = new Map<Uri, SourceMarker>();
 
@@ -58,6 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         console.log("Status bar pressed!");
     });
+
 
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated

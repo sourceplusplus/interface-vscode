@@ -37,11 +37,23 @@
         }
       }
     },
-    "icons": {
-      "statusbar-enabled": {
-        "description": "Statusbar Icon",
-        "default": "./icons/statusBar/status-enabled.svg"
-      }
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "sourceplusplus",
+          "title": "Source++",
+          "icon": "./icons/pluginIcon.svg",
+          "order": 1
+        }
+      ]
+    },
+    "views":{
+      "sourceplusplus":[
+        {
+          "id": "live-breakpoints",
+          "name": "Live Breakpoints"
+        }
+      ]
     }
   },
   "scripts": {
