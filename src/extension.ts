@@ -42,6 +42,18 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }
 
+    const testCommandId = "sourceplusplus.statusClick";
+
+    let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -10000000);
+    statusBarItem.command = testCommandId;
+    statusBarItem.text = "$(statusbar-enabled)S";
+    statusBarItem.tooltip = "Click to disable Source++";
+    statusBarItem.show();
+
+    vscode.commands.registerCommand(testCommandId, () => {
+        console.log("Status bar pressed!");
+    });
+
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
     console.log('Congratulations, your extension "sourceplusplus" is now active!');
