@@ -63,6 +63,18 @@ export default async function addBreakpointCommand() {
         "line": line
     }, condition, hitLimit);
 
+
+    // TODO: Handle this somewhere else to support opening files that already have live instruments
+    let decoration = vscode.window.createTextEditorDecorationType({
+        gutterIconPath: path.join(__dirname, "..", "..", "icons", "live-breakpoint-active.svg"),
+        gutterIconSize: "80% contain"
+    });
+
+    vscode.window.activeTextEditor?.setDecorations(decoration, [{
+        range: new vscode.Range(line, 0, line, 0),
+        hoverMessage: `Live Breakpoint`
+    }]);
+
     console.log(result);
 }
 
