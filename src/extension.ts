@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import EventBus = require("@vertx/eventbus-bridge-client.js");
 import {SourceMarker} from "./sourcemarker";
 import {Uri} from "vscode";
+import addBreakpointCommand from "./commands/addBreakpointCommand";
 
 const workspaces = new Map<Uri, SourceMarker>();
 
@@ -51,6 +52,10 @@ export function activate(context: vscode.ExtensionContext) {
     statusBarItem.show();
 
     vscode.commands.registerCommand(testCommandId, () => {
+        let inputBox = vscode.window.createInputBox();
+        inputBox.prompt = "test";
+        inputBox.show();
+
         console.log("Status bar pressed!");
     });
 
@@ -61,11 +66,7 @@ export function activate(context: vscode.ExtensionContext) {
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with registerCommand
     // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('sourceplusplus.addBreakpoint', () => {
-        // The code you place here will be executed every time your command is executed
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Breakpoint added!');
-    });
+    let disposable = vscode.commands.registerCommand('sourceplusplus.addBreakpoint', addBreakpointCommand);
 
     context.subscriptions.push(disposable);
 }
