@@ -4,6 +4,8 @@ import * as vscode from 'vscode';
 import {Uri} from 'vscode';
 import {SourceMarker} from "./sourcemarker";
 import addBreakpointCommand from "./commands/addBreakpointCommand";
+import BreakpointTreeProvider from "./sidebar/breakpointTreeProvider";
+import breakpointTreeProvider from "./sidebar/breakpointTreeProvider";
 
 const workspaces = new Map<Uri, SourceMarker>();
 
@@ -47,6 +49,11 @@ export function activate(context: vscode.ExtensionContext) {
         inputBox.show();
 
         console.log("Status bar pressed!");
+    });
+
+
+    vscode.window.createTreeView("live-breakpoints", {
+        treeDataProvider: breakpointTreeProvider
     });
 
 

@@ -1,42 +1,9 @@
 import {SourceMarker} from "../sourcemarker";
 import {LiveInstrumentEvent, LiveInstrumentEventType} from "./liveInstrumentEvent";
 import * as vscode from "vscode";
-import BreakpointTreeProvider from "./breakpoint/breakpointTreeProvider";
-import breakpointTreeProvider from "./breakpoint/breakpointTreeProvider";
-
-export interface BreakpointHitEvent {
-    breakpointId: string
-    traceId: string
-    occurredAt: string
-    service: string
-    serviceInstance: string
-    stackTrace: LiveStackTrace
-}
-
-export interface LiveStackTrace {
-    exceptionType: string
-    message: string
-    causedBy?: LiveStackTrace
-    elements: LiveStackTraceElement[]
-}
-
-export interface LiveStackTraceElement {
-    method: string
-    source: string
-    column?: number
-    sourceCode?: string
-    variables: LiveVariable[]
-}
-
-export interface LiveVariable {
-    name: string
-    value: string | number | LiveVariable[]
-    lineNumber: number
-    scope: string
-    liveClazz: string
-    liveIdentity: string
-    presentation?: string
-}
+import BreakpointTreeProvider from "../sidebar/breakpointTreeProvider";
+import BreakpointHit from "../model/breakpointHit";
+import SidebarHandler from "../sidebar/sidebarHandler";
 
 export default class LiveInstrumentManager {
     sourceMarker: SourceMarker
@@ -85,11 +52,9 @@ export default class LiveInstrumentManager {
     }
 
     handleBreakpointHitEvent(liveEvent: LiveInstrumentEvent) {
-        let hitEvent: BreakpointHitEvent = JSON.parse(liveEvent.data);
+        let hitEvent: BreakpointHit = JSON.parse(liveEvent.data);
 
-        vscode.window.createTreeView("live-breakpoints", {
-            treeDataProvider: new BreakpointTreeProvider(hitEvent.stackTrace.elements[0].variables)
-        });
+        SidebarHandler.setViewedBreakpointHit(hitEvent);
     }
 
     handleBreakpointAddedEvent(liveEvent: LiveInstrumentEvent) {
