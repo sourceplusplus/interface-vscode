@@ -67,10 +67,10 @@ export default async function addBreakpointCommand() {
     let hitLimit = parseInt(input.value);
     input.dispose();
 
-    // let result = await sourceMarker.addLiveBreakpoint({
-    //     "source": fileName,
-    //     "line": line
-    // }, condition, hitLimit);
+    let result = await sourceMarker.addLiveBreakpoint({
+        "source": fileName,
+        "line": line
+    }, condition, hitLimit);
 
     let cmd = vscode.commands.registerCommand("sourceplusplus.test", () => {
         console.log("test!");
