@@ -37,9 +37,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     const testCommandId = "sourceplusplus.statusClick";
 
-    let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -10000000);
+    let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -Infinity);
     statusBarItem.command = testCommandId;
-    statusBarItem.text = "$(statusbar-enabled)S";
+    statusBarItem.text = "S++";
     statusBarItem.tooltip = "Click to disable Source++";
     statusBarItem.show();
 

@@ -1,28 +1,21 @@
 import EventBus = require("@vertx/eventbus-bridge-client.js");
 import * as vscode from "vscode";
 import axios from "axios";
-import {readConfig, SourceMarkerConfig} from "./sourceMarkerConfig";
+import {readConfig, SourceMarkerConfig} from "./model/sourceMarkerConfig";
 import LiveInstrumentManager from "./instruments/liveInstrumentManager";
+import Record from "./model/record";
+import LiveLocation from "./model/liveLocation";
 
-interface Record {
-    location: RecordLocation
-    metadata: any
-    name: string
-    registration: string
-    status: string
-    type: string
-}
-
-interface RecordLocation {
-    endpoint: string
-}
-
-export interface LiveLocation {
-    source: string
-    line: number
+export enum SourceMarkerStatus {
+    STARTING,
+    ACTIVE,
+    CONNECTING,
+    ERROR
 }
 
 export class SourceMarker {
+    status: SourceMarkerStatus = SourceMarkerStatus.STARTING
+
     config?: SourceMarkerConfig
 
     token?: string;
@@ -44,10 +37,12 @@ export class SourceMarker {
 
         console.log(`Host: ${host}, accessToken: ${accessToken}`);
 
+        this.status = SourceMarkerStatus.CONNECTING
+
         this.token = await axios.get(`${host}/api/new-token?access_token=${accessToken}`)
             .then(response => response.data)
             .catch(error => {
-                // TODO: Handle error
+                this.status = SourceMarkerStatus.ERROR;
                 console.log(error);
             });
 
@@ -56,6 +51,7 @@ export class SourceMarker {
 
         await new Promise<void>((resolve, reject) => this.eventBus!.onopen = resolve);
 
+        this.status = SourceMarkerStatus.ACTIVE;
         console.log("Connected to Source++ Platform");
 
         let _ = await this.eventBusSend("spp.platform.status.marker-connected", {
