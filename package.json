@@ -82,7 +82,7 @@
     "@vscode/test-electron": "2.2.1",
     "eslint": "8.29.0",
     "glob": "8.0.3",
-    "mocha": "10.1.0",
+    "mocha": "10.2.0",
     "typescript": "4.9.4",
     "webfont": "11.2.26"
   },
