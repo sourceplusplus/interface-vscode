@@ -4,7 +4,7 @@
   "description": "This project contains the VSCode plugin for Source++, the open-source live coding platform. This plugin also works with regular Apache SkyWalking installations, but only Live View commands are supported.",
   "version": "0.6.7",
   "engines": {
-    "vscode": "^1.70.0"
+    "vscode": "^2023.0.0"
   },
   "categories": [
     "Other"
